@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile | PetConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+	body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s, color 0.4s; }
+	   body.light-mode { background-color: #fff0f5; color: #333; }
+	   body.dark-mode { background-color: #121212; color: #f8f9fa; }
+
+	   .navbar { transition: background-color 0.4s; }
+	   .navbar.light-mode { background-color: #ff8fb2; }
+	   .navbar.dark-mode { background-color: #000; }
+
+	   .nav-link { color: white !important; margin-right: 15px; font-weight: 500; }
+	   .nav-link:hover { color: #333 !important; }         
+
+    .profile-card { background-color: #fff; border: 2px solid #ffb6c1; border-radius: 20px; padding: 30px; text-align: center; box-shadow: 0 4px 20px rgba(255,105,180,0.3); transition: all 0.3s; }
+    body.dark-mode .profile-card { background-color: #1e1e1e; border-color: #ff5d8f; box-shadow: 0 0 15px rgba(255,105,180,0.4); }
+
+    .profile-pic { width: 130px; height: 130px; border-radius: 50%; object-fit: cover; border: 3px solid #ff5d8f; box-shadow: 0 0 10px #ffb6c1; }
+
+    .btn-rose { background-color: #ff5d8f; color: white; border: none; font-weight: 600; transition: 0.3s; }
+    .btn-rose:hover { background-color: #ff3d73; box-shadow: 0 0 10px #ff5d8f; }
+
+    .card-section { border: 2px solid #ffb6c1; border-radius: 15px; padding: 20px; background-color: #fff; margin-bottom: 20px; box-shadow: 0 3px 15px rgba(255,105,180,0.2); transition: all 0.3s; }
+    body.dark-mode .card-section { background-color: #1e1e1e; border-color: #ff5d8f; box-shadow: 0 0 15px rgba(255,105,180,0.4); }
+
+    h3 { color: #ff5d8f; font-weight: bold; }
+    body.dark-mode h3 { color: #ff8fb2; }
+
+    footer { text-align: center; padding: 15px; background-color: #ff8fb2; color: white; }
+    body.dark-mode footer { background-color: #000; color: #ff8fb2; }
+
+    /* Modal */
+    #modalContent { transition: all 0.3s; }
+    body.light-mode #modalContent { background-color: #fff; color: #333; }
+    body.dark-mode #modalContent { background-color: #1e1e1e; color: #f9d65c; }
+  </style>
+</head>
+<body class="light-mode">
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg shadow-sm fixed-top light-mode">
+    <div class="container">
+      <a class="navbar-brand" href="#">🐾 PetConnect</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto align-items-center">
+          <li class="nav-item"><a class="nav-link active" href="Home.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="adopt.html">Adopt</a></li>
+          <li class="nav-item"><a class="nav-link" href="AddPets.html">Add Pets</a></li>
+          <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
+          <li class="nav-item"><a class="nav-link" href="profile.html">My Profile</a></li>
+        </ul>
+        <div class="form-check form-switch ms-3">
+          <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+          <label class="form-check-label text-dark fw-bold" for="darkModeSwitch">🌙</label>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- Profile Section -->
+  <section class="container" style="margin-top: 110px;">
+    <div class="profile-card text-center">
+      <img src="https://cdn-icons-png.flaticon.com/512/847/847969.png" alt="User" class="profile-pic mb-3">
+      <h3 id="userName">Loading...</h3>
+      <p id="userTag" class="text-muted">🐾 Pet Lover | Developer | Chennai, India</p>
+      <p><strong>Email:</strong> <span id="userEmail">-</span></p>
+      <p><strong>Phone:</strong> <span id="userPhone">-</span></p>
+      <p><strong>Address:</strong> <span id="userAddress">-</span></p>
+      <button class="btn btn-rose mt-2" id="editBtn">Edit Profile</button>
+      <button class="btn btn-rose mt-2" id="logoutBtn">Log Out</button>
+    </div>
+
+    <!-- Edit Profile Form -->
+    <div class="card-section mt-4" id="editSection" style="display:none;">
+      <h3>Edit Your Details ✏️</h3>
+      <form id="editForm">
+        <input type="text" id="editName" class="form-control mb-3" required>
+        <input type="email" id="editEmail" class="form-control mb-3" required>
+        <input type="text" id="editPhone" class="form-control mb-3" required>
+        <textarea id="editAddress" class="form-control mb-3" rows="2" required></textarea>
+        <button type="submit" class="btn btn-rose">Save Changes</button>
+        <button type="button" class="btn btn-secondary ms-2" id="cancelEdit">Cancel</button>
+      </form>
+    </div>
+
+    <!-- My Pets -->
+    <div class="card-section mt-5">
+      <h3>My Pets 🐶</h3>
+      <ul class="list-group" id="myPetsList">
+        <li class="list-group-item text-muted">Loading pets...</li>
+      </ul>
+    </div>
+
+    <!-- My Bookings -->
+    <div class="card-section">
+      <h3>My Bookings 📋</h3>
+      <ul class="list-group" id="myBookingsList">
+        <li class="list-group-item text-muted">Loading bookings...</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Modal -->
+  <div class="modal fade" id="messageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" id="modalContent">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalTitle">Message</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalBody">Loading...</div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-rose" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="mt-5">
+    <p class="mb-0">© 2025 PetConnect | Made with 💗 by Kishore</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const darkSwitch = document.getElementById('darkModeSwitch');
+    const editBtn = document.getElementById('editBtn');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const editSection = document.getElementById('editSection');
+    const cancelEdit = document.getElementById('cancelEdit');
+    const editForm = document.getElementById('editForm');
+
+    const nameField = document.getElementById('userName');
+    const emailField = document.getElementById('userEmail');
+    const phoneField = document.getElementById('userPhone');
+    const addressField = document.getElementById('userAddress');
+
+    let currentUser = null;
+
+    // Modal helper
+    function showMessage(title, message, type="info"){
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalBody").textContent = message;
+      const modalContent = document.getElementById("modalContent");
+      if(type=="success"){ modalContent.style.border="3px solid #28a745"; }
+      else if(type=="error"){ modalContent.style.border="3px solid #dc3545"; }
+      else{ modalContent.style.border="3px solid #ffc107"; }
+      new bootstrap.Modal(document.getElementById("messageModal")).show();
+    }
+
+    // Theme toggle
+    darkSwitch.addEventListener('change', () => document.body.classList.toggle('dark-mode'));
+
+    // Load user
+    window.onload = async () => {
+      const storedUser = localStorage.getItem("petconnect_user");
+      if(!storedUser){ showMessage("Login Required", "Please log in first", "error"); setTimeout(()=>window.location.href="login.html",1500); return; }
+      currentUser = JSON.parse(storedUser);
+      displayUser(currentUser);
+      await loadMyPets(currentUser.id);
+      await loadMyBookings(currentUser.id);
+    };
+
+    function displayUser(user){
+      nameField.textContent = user.fullname || "User";
+      emailField.textContent = user.email || "-";
+      phoneField.textContent = user.phone || "-";
+      addressField.textContent = user.address || "-";
+    }
+
+    // Edit profile
+    editBtn.addEventListener('click', ()=>{
+      editSection.style.display = 'block';
+      document.getElementById('editName').value = nameField.textContent;
+      document.getElementById('editEmail').value = emailField.textContent;
+      document.getElementById('editPhone').value = phoneField.textContent;
+      document.getElementById('editAddress').value = addressField.textContent;
+      window.scrollTo({top: editSection.offsetTop-50, behavior:'smooth'});
+    });
+
+    cancelEdit.addEventListener('click', ()=> editSection.style.display='none');
+
+    editForm.addEventListener('submit', async e=>{
+      e.preventDefault();
+      const updated = {
+        fullname: document.getElementById('editName').value,
+        email: document.getElementById('editEmail').value,
+        phone: document.getElementById('editPhone').value,
+        address: document.getElementById('editAddress').value
+      };
+      try{
+        const res = await fetch(`http://localhost:8000/api/users/${currentUser.id}`, {
+          method:"PUT",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(updated)
+        });
+        if(res.ok){
+          const newData = await res.json();
+          currentUser = newData;
+          localStorage.setItem("petconnect_user", JSON.stringify(newData));
+          displayUser(newData);
+          showMessage("Profile Updated ✅","Your profile has been updated.","success");
+          editSection.style.display='none';
+        }else showMessage("Failed ❌","Update failed","error");
+      }catch(err){ showMessage("Error ⚠️","Cannot connect to server","error"); }
+    });
+
+    // Logout
+    logoutBtn.addEventListener('click', ()=>{
+      localStorage.removeItem("petconnect_user");
+      showMessage("Logged Out 👋","You have logged out successfully.","success");
+      setTimeout(()=>window.location.href="login.html",1200);
+    });
+
+    // Load pets
+    async function loadMyPets(userId){
+      try{
+        const res = await fetch(`http://localhost:8000/api/pets/user/${userId}`);
+        const petsList = document.getElementById("myPetsList");
+        petsList.innerHTML="";
+        if(res.ok){
+          const pets = await res.json();
+          if(pets.length===0){ petsList.innerHTML=`<li class="list-group-item text-muted">No pets added yet.</li>`; }
+          else pets.forEach(p=>petsList.innerHTML+=`<li class="list-group-item">🐾 ${p.name} – ${p.type} (${p.age} yrs)</li>`);
+        }
+      }catch(err){ console.error(err); }
+    }
+
+    // Load bookings
+    async function loadMyBookings(userId){
+      try{
+        const res = await fetch(`http://localhost:8000/api/bookings/user/${userId}`);
+        const bookingsList = document.getElementById("myBookingsList");
+        bookingsList.innerHTML="";
+        if(res.ok){
+          const bookings = await res.json();
+          if(bookings.length===0){ bookingsList.innerHTML=`<li class="list-group-item text-muted">No bookings found.</li>`; }
+          else bookings.forEach(b=>bookingsList.innerHTML+=`<li class="list-group-item">🐾 Adopted: ${b.petName} – Booked on ${b.bookingDate}</li>`);
+        }
+      }catch(err){ console.error(err); }
+    }
+  </script>
+</body>
+</html>

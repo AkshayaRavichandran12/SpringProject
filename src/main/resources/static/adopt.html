@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adopt Pets | PetConnect</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+	body { font-family: 'Poppins', sans-serif; transition: background-color 0.4s, color 0.4s; }
+	   body.light-mode { background-color: #fff0f5; color: #333; }
+	   body.dark-mode { background-color: #121212; color: #f8f9fa; }
+
+	   .navbar { transition: background-color 0.4s; }
+	   .navbar.light-mode { background-color: #ff8fb2; }
+	   .navbar.dark-mode { background-color: #000; }
+
+	   .nav-link { color: white !important; margin-right: 15px; font-weight: 500; }
+	   .nav-link:hover { color: #333 !important; }         
+.pet-card {
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 3px 12px rgba(255,105,180,0.2);
+  transition: 0.3s;
+}
+.pet-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 18px rgba(255,105,180,0.4);
+}
+.btn-rose {
+  background: #ff5d8f; color: white; border: none;
+}
+.btn-rose:hover { background: #ff3d73; }
+
+
+  </style>
+</head>
+<body class="light-mode">
+
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg shadow-sm fixed-top light-mode">
+  <div class="container">
+    <a class="navbar-brand" href="#">🐾 PetConnect</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item"><a class="nav-link active" href="Home.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="adopt.html">Adopt</a></li>
+        <li class="nav-item"><a class="nav-link" href="AddPets.html">Add Pets</a></li>
+        <li class="nav-item"><a class="nav-link" href="bookings.html">Bookings</a></li>
+        <li class="nav-item"><a class="nav-link" href="profile.html">My Profile</a></li>
+      </ul>
+      <div class="form-check form-switch ms-3">
+        <input class="form-check-input" type="checkbox" id="darkModeSwitch">
+        <label class="form-check-label text-dark fw-bold" for="darkModeSwitch">🌙</label>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<!-- PET LIST -->
+
+<div class="container" style="margin-top: 100px;">
+  <h2 class="text-center mb-4">Available Pets for Adoption 🐶</h2>
+  <div class="row" id="petsContainer"></div>
+</div>
+
+<!-- PET DETAILS MODAL -->
+
+<div class="modal fade" id="petDetailsModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="detailsModalTitle" class="modal-title">Pet Details</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="col-md-5">
+            <img id="detailsImage" src="" class="img-fluid rounded" alt="Pet Image">
+          </div>
+          <div class="col-md-7">
+            <p><strong>Name:</strong> <span id="detailsName"></span></p>
+            <p><strong>Breed:</strong> <span id="detailsBreed"></span></p>
+            <p><strong>Category:</strong> <span id="detailsCategory"></span></p>
+            <p><strong>Age:</strong> <span id="detailsAge"></span></p>
+            <p><strong>Gender:</strong> <span id="detailsGender"></span></p>
+            <p><strong>Description:</strong> <span id="detailsDescription"></span></p>
+            <hr>
+            <h6>Owner Details</h6>
+            <p><strong>Name:</strong> <span id="ownerName"></span></p>
+            <p><strong>Email:</strong> <span id="ownerEmail"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING MODAL -->
+
+<div class="modal fade" id="bookingModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="modalTitle" class="modal-title">Book Adoption</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Pet:</strong> <span id="modalPetName"></span></p>
+        <p><strong>Type:</strong> <span id="modalPetType"></span></p>
+        <div class="mb-3">
+          <input type="text" id="contactInput" class="form-control" placeholder="Your Contact Number">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-rose" id="confirmBookingBtn">Confirm Booking</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MESSAGE MODAL -->
+
+<div class="modal fade" id="messageModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 id="messageTitle" class="modal-title">Message</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="messageBody"></div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+document.getElementById("darkModeSwitch").addEventListener("change", ()=>{
+    document.body.classList.toggle("dark-mode");
+});
+
+function showMessage(title, msg){
+    document.getElementById("messageTitle").textContent = title;
+    document.getElementById("messageBody").textContent = msg;
+    new bootstrap.Modal(document.getElementById("messageModal")).show();
+}
+
+let selectedPetId = null;
+
+async function loadPets(){
+    try {
+		const usr = JSON.parse(localStorage.getItem("petconnect_user"));
+
+		if(!usr){
+		    showMessage("Login Required", "Please login to view pets.");
+		    return;
+		}
+
+		const res = await fetch(`http://localhost:8000/api/pets/others/${usr.id}`);
+
+        if (!res.ok) {
+            showMessage("Error", "Unable to load pets.");
+            return;
+        }
+
+        const pets = await res.json();
+        const container = document.getElementById("petsContainer");
+        container.innerHTML = "";
+
+        pets.forEach(pet => {
+            container.innerHTML += `
+                <div class="col-md-4 mb-4">
+                    <div class="card pet-card">
+                        <img src="http://localhost:8000/uploads/${pet.imagePath}" class="card-img-top" height="220">
+                        <div class="card-body">
+                            <h5 class="card-title">${pet.name}</h5>
+                            <p class="card-text">Type: ${pet.category}</p>
+                            <p class="card-text">Age: ${pet.age}</p>
+                            <button class="btn btn-rose w-100 mb-2" onclick="openBooking(${pet.id}, '${pet.name}', '${pet.category}')">Adopt Now</button>
+                            <button class="btn btn-rose w-100" onclick="viewDetails(${pet.id})">View Details</button>
+                        </div>
+                    </div>
+                </div>`;
+        });
+    } catch (err) {
+        showMessage("Error", "Server not reachable");
+    }
+}
+loadPets();
+
+function openBooking(id, name, type){
+    selectedPetId = id;
+    document.getElementById("modalPetName").textContent = name;
+    document.getElementById("modalPetType").textContent = type;
+    new bootstrap.Modal(document.getElementById("bookingModal")).show();
+}
+
+document.getElementById("confirmBookingBtn").addEventListener("click", async ()=>{
+    const usr = JSON.parse(localStorage.getItem("petconnect_user"));
+    if (!usr){ showMessage("Login Required", "Please login first."); return; }
+
+    const contact = document.getElementById("contactInput").value;
+    if(contact.trim() === ""){ showMessage("Missing Field", "Enter your contact number."); return; }
+
+    const booking = { contact, pet: {id: selectedPetId}, user: {id: usr.id} };
+
+    const res = await fetch("http://localhost:8000/api/bookings", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify(booking)
+    });
+
+    if (res.ok) showMessage("Success", "Booking Requested Successfully! 🐾");
+    else showMessage("Failed", "Could not complete booking.");
+});
+
+async function viewDetails(petId){
+    try {
+        const res = await fetch(`http://localhost:8000/api/pets/${petId}`);
+        if(!res.ok){ showMessage("Error","Couldn't fetch pet details"); return; }
+
+        const pet = await res.json();
+
+        document.getElementById("detailsModalTitle").textContent = pet.name;
+        document.getElementById("detailsImage").src = `http://localhost:8000/uploads/${pet.imagePath}`;
+        document.getElementById("detailsName").textContent = pet.name;
+        document.getElementById("detailsBreed").textContent = pet.breed;
+        document.getElementById("detailsCategory").textContent = pet.category;
+        document.getElementById("detailsAge").textContent = pet.age;
+        document.getElementById("detailsGender").textContent = pet.gender;
+        document.getElementById("detailsDescription").textContent = pet.description;
+		document.getElementById("ownerName").textContent = pet.owner?.fullname || 'N/A';
+        document.getElementById("ownerEmail").textContent = pet.owner?.email || 'N/A';
+
+        new bootstrap.Modal(document.getElementById("petDetailsModal")).show();
+    } catch(err){
+        showMessage("Error","Server not reachable");
+    }
+}
+</script>
+
+
+</body>
+</html>
